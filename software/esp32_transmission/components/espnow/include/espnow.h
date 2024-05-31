@@ -18,6 +18,11 @@
 #include "esp_now.h"
 #include "esp_crc.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /**
  * @brief 初始化WIFI函数
  * 启动WIFI
@@ -28,19 +33,14 @@ void wifi_init(void);
  * @brief 初始化espnow函数
  * 启动espnow
  */
-void espnow_init(void);
+esp_err_t espnow_init(void);
 
-/**
- * @brief 测试espnow函数
- * 测试espnow
- */
-void espnow_rec(void);
+// ESPNOW发送任务
+void espnow_tasks(void *pvParameter);
 
-/**
- * @brief 测试espnow_sen函数
- * 测试espnow_sen
- */
-void espnow_sen(void);
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* _ESPNOW_H_ */

@@ -6,7 +6,9 @@
 #include "esp_log.h"
 #include "driver/i2c.h"
 #include "parameter.h"
-
+#include "nvs_flash.h"
+#include "espnow.h"
+#include "esp_now.h"
 static const char *TAG = "MAIN";
 
 QueueHandle_t xQueueTrans;
@@ -15,6 +17,7 @@ extern "C" {
 	void app_main(void);
 }
 
+// MUP6050任务
 void mpu6050(void *pvParameters);
 
 void start_i2c(void) {
@@ -32,6 +35,21 @@ void start_i2c(void) {
 
 void app_main(void)
 {
+	// Initialize NVS
+	esp_err_t ret = nvs_flash_init();
+	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+	{
+		ESP_ERROR_CHECK(nvs_flash_erase());
+		ret = nvs_flash_init();
+	}
+	ESP_ERROR_CHECK(ret);
+
+	// Initialize WiFi
+	wifi_init();
+
+	// Initialize ESPNOW
+	espnow_init();
+
 	// Initialize i2c
 	start_i2c();
 
@@ -41,6 +59,9 @@ void app_main(void)
 
 	// Start imu task
 	xTaskCreate(&mpu6050, "IMU", 1024*8, NULL, 5, NULL);
+
+	// Start espnow task
+	xTaskCreate(&espnow_tasks, "ESPNOW", 1024*8, NULL, 5, NULL);
 
 	// 读取队列
 	POSE_t pose;

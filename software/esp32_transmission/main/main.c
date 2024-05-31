@@ -6,6 +6,8 @@
 #include "espnow.h"
 #include "esp_now.h"
 #include "nvs_flash.h"
+#include "serial_screen.h"
+
 #define LED_GPIO GPIO_NUM_10
 
 void app_main(void)
@@ -32,6 +34,9 @@ void app_main(void)
 	// sd_card_init();
 	// ESP_LOGI("main", "SD测试");
 	// sd_card_test();
+	// 串口发送
+	uart_config();
+	uart_send_receive_demo();
 
 	// 点灯
 	for (;;)

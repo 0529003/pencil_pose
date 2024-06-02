@@ -36,15 +36,22 @@ void app_main(void)
 	// sd_card_test();
 	// 串口发送
 	uart_config();
-	uart_send_receive_demo();
+	while(1)
+	{
+		vTaskDelay(1);
+		uart_send_receive_demo();
+
+	}
+
+	// xTaskCreate(&uart_send_receive_demo, "IMU", 1024*8, NULL, 5, NULL);
 
 	// 点灯
-	for (;;)
-	{
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-		gpio_set_level(LED_GPIO, 1);
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-		gpio_set_level(LED_GPIO, 0);
-		ESP_LOGI("main", "Hello World!");
-	}
+	// for (;;)
+	// {
+	// 	vTaskDelay(1000 / portTICK_PERIOD_MS);
+	// 	gpio_set_level(LED_GPIO, 1);
+	// 	vTaskDelay(1000 / portTICK_PERIOD_MS);
+	// 	gpio_set_level(LED_GPIO, 0);
+	// 	ESP_LOGI("main", "Hello World!");
+	// }
 }

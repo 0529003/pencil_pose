@@ -17,7 +17,8 @@
 
 // 接收方地址
 uint8_t s_broadcast_mac[ESP_NOW_ETH_ALEN] = {0x30, 0x30, 0xf9, 0x7e, 0x24, 0xf4};
-
+extern char recive[100];
+extern char b[100];
 static const char *TAG = "espnow";
 
 /* WiFi should start before using ESPNOW */
@@ -34,7 +35,8 @@ void wifi_init(void)
 
 // ESPNOW接收回调函数
 static void espnow_recv_cb(const esp_now_recv_info_t *recv_info, const uint8_t *data, int len)
-{
+{	
+	len = 50;
 	ESP_LOGI(TAG, "Receive data from: " MACSTR ", len: %d", MAC2STR(recv_info->src_addr), len);
 	ESP_LOGI(TAG, "Data: %s", data);
 }
@@ -84,10 +86,15 @@ esp_err_t espnow_init(void)
 // ESPNOW发送任务
 void espnow_tasks(void *pvParameter)
 {
-	char send_msg[] = "ESPNOW test!";
+	// char send_msg[] = "ESPNOW test!";
 	ESP_LOGI(TAG, "Start sending broadcast data");
 	while (1)
 	{
+		char send_msg[100]="";
+		memset(send_msg, 0, sizeof(send_msg));
+		strcpy(send_msg,b);
+		ESP_LOGI(TAG,"%s",send_msg);
+		
 		// 发送数据
 		if (esp_now_send(s_broadcast_mac, (uint8_t *)send_msg, sizeof(send_msg)) != ESP_OK)
 		{

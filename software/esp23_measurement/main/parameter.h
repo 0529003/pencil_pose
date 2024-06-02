@@ -12,5 +12,11 @@ typedef struct {
 	float roll;
 	float pitch;
 	float yaw;
+	float x;
+	float y;
+	float z;
+	float xx;
+	float yy;
+	float zz;
 } POSE_t;
 

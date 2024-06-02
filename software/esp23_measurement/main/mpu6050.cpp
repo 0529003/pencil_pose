@@ -50,7 +50,7 @@ THE SOFTWARE.
 #include "esp_err.h"
 #include "driver/i2c.h"
 #include "cJSON.h"
-
+#include "math.h"
 #include "parameter.h"
 
 extern QueueHandle_t xQueueTrans;
@@ -135,7 +135,7 @@ void getWorldAccel() {
 	mpu.dmpGetGravity(&gravity, &q);
 	mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
 	mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-	printf("aworld x:%d y:%d z:%d\n", aaWorld.x, aaWorld.y, aaWorld.z);
+	printf("aworld x:%d y:%d\n z:%d\n", aaWorld.x, aaWorld.y, aaWorld.z);
 }
 
 void mpu6050(void *pvParameters){
@@ -183,14 +183,23 @@ void mpu6050(void *pvParameters){
 			pose.roll = _roll;
 			pose.pitch = _pitch;
 			pose.yaw = _yaw;
+
+			pose.x = aaWorld.x;
+			pose.y = aaWorld.y;
+			pose.z = aaWorld.z;
+
+			pose.xx = aaReal.x;
+			pose.yy = aaReal.y;
+			pose.zz = aaReal.z;
+			
 			if (xQueueSend(xQueueTrans, &pose, 100) != pdPASS ) {
 				ESP_LOGE(TAG, "xQueueSend fail");
 			}
 
 			//getQuaternion();
-			//getEuler();
-			//getRealAccel();
-			//getWorldAccel();
+			getEuler();
+			getRealAccel();
+			getWorldAccel();
 		}
 
 		// Best result is to match with DMP refresh rate
